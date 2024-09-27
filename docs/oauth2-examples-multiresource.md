@@ -66,7 +66,7 @@ This is a summary of the configuration, found in [rabbitmq.conf](https://github.
     auth_oauth2.preferred_username_claims.1 = preferred_username
     auth_oauth2.preferred_username_claims.2 = user_name
     auth_oauth2.preferred_username_claims.3 = email
-    auth_oauth2.jwks_url = https://keycloak:8443/realms/test/protocol/openid-connect/certs
+    auth_oauth2.issuer = https://keycloak:8443/realms/test
     auth_oauth2.scope_prefix = rabbitmq.
     auth_oauth2.https.peer_verification = verify_peer
     auth_oauth2.https.cacertfile = /etc/rabbitmq/keycloak-cacert.pem
