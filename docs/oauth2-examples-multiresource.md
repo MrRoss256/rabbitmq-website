@@ -43,7 +43,7 @@ different OAuth2 servers or they could be registered on the same OAuth2 server h
 ## AMQP clients and management users registered in same OAuth 2.0 server but with different audience
 
 RabbitMQ is configured with two OAuth2 resources one called `rabbit_prod` and another `rabbit_dev`. For example purposes, let's say, the production team refer to RabbitMQ with the `rabbit_prod` audience. And the development team with the `rabbit_dev` audience.
-As both teams are registered in the same OAuth2 server you are going to configure its settings such as `jwks_url` at the
+As both teams are registered in the same OAuth2 server you are going to configure its settings such as `jwks_uri` at the
 root level so that both resources share the same configuration.
 
 In the past, RabbitMQ imposed a restriction where the scopes had to be prefixed with the name of the resource/audience. For instance, if `resource_server_id` was `rabbitmq1`, all scopes had to be prefixed with the value `rabbitmq1`, for example `rabbitmq1.tag:administrator`.
