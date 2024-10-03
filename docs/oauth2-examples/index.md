@@ -531,6 +531,7 @@ make curl-with-token URL=http://localhost:15672/api/overview TOKEN=$(bin/jwt_tok
 ### Using Scope Aliases {#using-scope-aliases}
 
 This example demonstrates how to use custom scopes with RabbitMQ. 
+
 **UAA** identity provider has been configured with two clients (`producer_with_roles`
 and `consumer_with_roles`) with the following custom scopes:
   `producer_with_roles` with 
