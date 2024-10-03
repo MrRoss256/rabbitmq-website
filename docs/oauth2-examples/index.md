@@ -530,114 +530,51 @@ make curl-with-token URL=http://localhost:15672/api/overview TOKEN=$(bin/jwt_tok
 
 ### Using Scope Aliases {#using-scope-aliases}
 
-In this use case you are going to demonstrate how to configure RabbitMQ to handle
-*custom scopes*. But what are *custom scopes*? They are any
-scope whose format is not compliant with RabbitMQ format. For instance, `api://rabbitmq:Read.All`
-is one of the custom scopes you will use in this use case.
+This example demonstrates how to use custom scopes with RabbitMQ. 
+**UAA** identity provider has been configured with two clients (`producer_with_roles`
+and `consumer_with_roles`) with the following custom scopes:
+  `producer_with_roles` with 
+    - `api://rabbitmq:producer`.
 
-#### How to Configure RabbitMQ to Use a Custom Scope Mapping
+  `consumer_with_roles` with  
+    - `api://rabbitmq:Read.All`.
+    - `api://rabbitmq:Write.All`.
+    - `api://rabbitmq:Configure.All`.
+    - `api://rabbitmq:Administrator`.
+    
+For more information about scope aliases, check out
+the [section](./oauth2#scope-aliases) that explains it in more detail. 
 
-Starting with [RabbitMQ `3.10.0`](https://github.com/rabbitmq/rabbitmq-server/releases/tag/v3.10.0),
-the OAuth 2.0 plugin supports mapping of a scope aliases (arbitrary scope values or "names") to one or more scopes
-in the format that follows the RabbitMQ OAuth 2.0 plugin conventions.
+#### How to Configure Scope Aliases
 
-See below a sample RabbitMQ configuration where you map `api://rabbitmq:Read.All`
-custom scope to `rabbitmq.read:*/*` RabbitMQ scope.
+This is the configuration required to map those custom scopes to RabbitMQ scopes.
 
-``` erl
-{rabbitmq_auth_backend_oauth2, [
- %%...,
-	{scope_aliases, #{
-		<<"api://rabbitmq:Read.All">>      => [<<"rabbitmq.read:*/*">>],
-	  ...
-	},
-	%%...
-]}
-```
-
-Additionally, you can map a custom scope to many RabbitMQ scopes. For instance below you
-are mapping the role `api://rabbitmq:producer` to 3 RabbitMQ scopes which grants
-`read`, `write` and `configure` access on any resource and on any vhost:
-
-``` erl
-{rabbitmq_auth_backend_oauth2, [
-  %% ...,
-
-	{scope_aliases, #{
-		<<"api://rabbitmq:producer">> => [
-			<<"rabbitmq.read:*/*">>,
-			<<"rabbitmq.write:*/*">>,
-			<<"rabbitmq.configure:*/*">>
-		]
-	}},
-	%% ...
-]}
-```
-
-#### Scopes Aliases in JWT Tokens
-
-If you do not configure RabbitMQ OAuth 2.0 plugin with `extra_scopes_source`, RabbitMQ
-expects the `scope` token's field to carry *custom scopes*. For instance, below you have a sample JWT
-token where the custom scopes are in the `scope` field :
-
-```javascript
-{
-  "sub": "producer",
-  "scope": [
-    "api://rabbitmq:producer",
-    "api://rabbitmq:Administrator"
-  ],
-  "aud": [
-    "rabbitmq"
-  ]
-}
-```
-
-Now, let's say you do configure RabbitMQ OAuth 2.0 plugin with `extra_scopes_source` as shown below:
-
+:::tip 
+Since RabbitMQ 4.1, it is possible to configure **scope aliases** using the [ini-like](./configure#config-file) configuration style. Earlier versions only supported 
+the legacy Erlang-style.
+:::
 
 ```ini
-# ...
-auth_oauth2.resource_server_id = rabbitmq
-auth_oauth2.additional_scopes_key = roles
-# ...
+auth_oauth2.scope_aliases.1.alias = api://rabbitmq:Read.All
+auth_oauth2.scope_aliases.1.scope = rabbitmq.read:*/*
+
+auth_oauth2.scope_aliases.2.alias = api://rabbitmq:Write.All
+auth_oauth2.scope_aliases.2.scope = rabbitmq.write:*/*
+
+auth_oauth2.scope_aliases.3.alias = api://rabbitmq:Configure.All
+auth_oauth2.scope_aliases.3.scope = rabbitmq.configure:*/*
+
+auth_oauth2.scope_aliases.3.alias = api://rabbitmq:Administrator
+auth_oauth2.scope_aliases.3.scope = rabbitmq.tag:administrator
+
+auth_oauth2.scope_aliases.4.alias = api://rabbitmq:producer
+auth_oauth2.scope_aliases.4.scope = rabbitmq.read:*/* rabbitmq.write:*/* rabbitmq.configure:*/* rabbitmq.tag:management
+
 ```
 
-With this configuration, RabbitMQ expects *custom scopes* in the field `roles` and
-the `scope` field is ignored.
 
-```javascript
-{
-  "sub": "rabbitmq-client-code",
-  "roles": "api://rabbitmq:Administrator.All",
-  "aud": [
-    "rabbitmq"
-  ]
-}
-```
+#### Test scope aliases
 
-#### UAA Configuration
-
-To demonstrate this new capability you have configured UAA with two Oauth 2.0 clients. One
-called `producer_with_roles` with the *custom scope* `api://rabbitmq:producer` and `consumer_with_roles` with
-`api://rabbitmq:Read:All,api://rabbitmq:Configure:All,api://rabbitmq:Write:All`.
-> You are granting configure and write permissions to the consumer because you have configured perf-test to declare
-resources regardless whether it is a producer or consumer application.
-
-These two uaac commands declare the two OAuth 2.0 clients above. You are adding an extra scope called `rabbitmq.*` so
-that UAA populates the JWT claim `aud` with the value `rabbitmq`. RabbitMQ expects `aud` to match the value you
-configure RabbitMQ with in the `resource_server_id` field.
-
-```bash
-uaac client add producer_with_roles --name producer_with_roles \
-    --authorities "rabbitmq.*,api://rabbitmq:producer,api://rabbitmq:Administrator" \
-    --authorized_grant_types client_credentials \
-    --secret producer_with_roles_secret
-uaac client add consumer_with_roles --name consumer_with_roles \
-    --authorities "rabbitmq.* api://rabbitmq:read:All" \
-    --authorized_grant_types client_credentials \
-    --secret consumer_with_roles_secret
-```
 
 
 #### RabbitMQ Configuration
