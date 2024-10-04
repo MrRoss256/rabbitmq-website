@@ -534,6 +534,7 @@ This example demonstrates how to use custom scopes with RabbitMQ.
 
 **UAA** identity provider has been configured with two clients (`producer_with_roles`
 and `consumer_with_roles`) with the following custom scopes:
+
   `producer_with_roles` with 
     - `api://rabbitmq:producer`.
 
