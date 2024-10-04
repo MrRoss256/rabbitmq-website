@@ -139,7 +139,7 @@ In chronological order, here is the sequence of events that occur when a client 
 | `auth_oauth2.resource_server_type`         | The Resource Server Type required when using [Rich Authorization Request](#rich-authorization-request) token format
 | `auth_oauth2.additional_scopes_key`        | Configure the plugin to look for scopes in other fields (maps to `additional_rabbitmq_scopes` in the old format). |
 | `auth_oauth2.scope_prefix`                 | [Configure the prefix for all scopes](#scope-prefix). The default value is `auth_oauth2.resource_server_id` followed by the dot `.` character. 
-| `auth_oauth2.scope_aliases`                | [Configure scope aliases](#scope-aliases). See this [example](oauth2-examples#using-scope-aliases).
+| `auth_oauth2.scope_aliases`                | [Configure scope aliases](#scope-aliases). See this [example](./oauth2-examples#using-scope-aliases).
 | `auth_oauth2.preferred_username_claims`    | [List of the JWT claims](#preferred-username-claims) to look for the username associated with the token.
 | `auth_oauth2.default_key`                  | ID of the default signing key.
 | `auth_oauth2.signing_keys`                 | Paths to the [signing key files](#signing-key-files).
@@ -267,7 +267,7 @@ Each `auth_oauth2.resource_servers.<id/index>.` entry has the following variable
 | `resource_server_type`       | The Resource Server Type required when using [Rich Authorization Request](#rich-authorization-request) token format.
 | `additional_scopes_key`      | Configure the plugin to look for scopes in other fields (maps to `additional_rabbitmq_scopes` in the old format).
 | `scope_prefix`               | [Configure the prefix for all scopes](#scope-prefix). The default value is `auth_oauth2.resource_server_id` followed by the dot `.` character.
-| `scope_aliases`              | [Configure scope aliases](#scope_aliases)
+| `scope_aliases`              | [Configure scope aliases](#scope-aliases)
 | `preferred_username_claims`  | [List of the JWT claims](#preferred-username-claims) to look for the username associated with the token separated by commas.
 | `oauth_provider_id`          | The identifier of the OAuth Provider associated to this resource. RabbitMQ uses the signing keys issued by this OAuth Provider to validate tokens whose audience matches this resource's id.
 
